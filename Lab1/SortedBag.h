@@ -13,7 +13,9 @@ class SortedBag {
 	friend class SortedBagIterator;
 
 private:
-	//TODO - Representation
+	TComp *Bag;
+	int bagSize;
+	bag = new TComp[bagSize];
 
 public:
 	//constructor
