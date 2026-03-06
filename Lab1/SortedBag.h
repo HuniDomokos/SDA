@@ -15,7 +15,7 @@ class SortedBag {
 private:
 	TComp *Bag;
 	int bagSize = 0;
-	bag = new TComp[bagSize];
+	Bag = new TComp[bagSize];
 
 public:
 	//constructor
