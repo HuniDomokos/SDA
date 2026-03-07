@@ -14,8 +14,9 @@ class SortedBag {
 
 private:
 	TComp *Bag;
-	int bagSize = 0;
-	Bag = new TComp[bagSize];
+	int bagSize;
+	int currentSize;
+	Relation rel;
 
 public:
 	//constructor
