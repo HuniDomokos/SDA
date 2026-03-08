@@ -1,4 +1,7 @@
 #include "SortedBag.h"
+
+#include <bits/error_constants.h>
+
 #include "SortedBagIterator.h"
 
 SortedBag::SortedBag(Relation r) {
@@ -14,7 +17,7 @@ void SortedBag::add(TComp e) {
 	this->currentSize++;
 }
 	else {
-	throw std::out_of_range("Bag is full");
+	throw std::invalid_argument("Bag is full");
 }
 }
 
