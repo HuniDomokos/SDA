@@ -13,7 +13,7 @@ class SortedBag {
 	friend class SortedBagIterator;
 
 private:
-	TComp *Bag;
+	std::pair<TComp,int> *Bag;
 	int bagSize;
 	int currentSize;
 	Relation rel;

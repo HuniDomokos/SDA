@@ -4,17 +4,23 @@
 
 #include "SortedBagIterator.h"
 
-SortedBag::SortedBag(Relation r) {
+#include <pair>
+
+SortedBag::SortedBag(Relation r, int bagSize) {
 	this->rel = r;
-	this->bagSize = 10;
+	this->bagSize = bagSize;
 	this->count = 0;
-	this->Bag =  new TComp[bagSize];
+	this->Bag =  new std::pair<TComp,int>[bagSize];
 }
 
 void SortedBag::add(TComp e) {
 	if (this->currentSize < bagSize) {
-	this->Bag[this->currentSize] = e;
-	this->currentSize++;
+	for (int i = 0; i< this->currentSize; i++) {
+		if (this->Bag[i].first == e) {this->Bag[i].second++; return;}
+	}
+	this->Bag[this->currentSize].first = e;
+	this->Bag[this->currentSize].second = 1;
+		this->currentSize++;
 }
 	else {
 	throw std::invalid_argument("Bag is full");
@@ -24,7 +30,7 @@ void SortedBag::add(TComp e) {
 
 bool SortedBag::remove(TComp e) {
 	for (int i = 0; i < this->currentSize; i++) {
-	if (this->Bag[i] == e) {
+	if (this->Bag[i].first == e) {
 		for(int j = i; j < this->currentSize - 1; j++) {this->Bag[j] = this->Bag[j + 1];}
 
     this->currentSize--;
@@ -38,19 +44,17 @@ bool SortedBag::remove(TComp e) {
 bool SortedBag::search(TComp elem) const {
 
 	for (int i = 0; i < this->currentSize; i++) {
-    if (this->Bag[i] == elem) {return true;}
+    if (this->Bag[i].first == elem) {return true;}
 	}
 	return false;
 }
 
 
 int SortedBag::nrOccurrences(TComp elem) const {
-	if (search(elem)) {
-		int count = 0;
+	if (search(elem)){
 	for (int i = 0; i < this->currentSize; i++) {
-		if (this->Bag[i] == elem) {count++;}
+		if (this->Bag[i].first == elem) {return this->Bag[i].second;}
     }
-    return count;
 	}
 	return 0;
 }
