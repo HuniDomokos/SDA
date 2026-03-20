@@ -18,6 +18,8 @@ private:
 	int currentSize;
 	Relation rel;
 
+	void resize();
+
 public:
 	//constructor
 	SortedBag(Relation r);

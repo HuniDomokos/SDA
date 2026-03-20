@@ -6,6 +6,17 @@
 
 #include <pair>
 
+// resize
+void SortedBag::resize() {
+	auto temp= new std::pair<TComp,int>[this->bagSize];
+	this->bagSize *=2;
+	for (int i = 0; i < this->currentSize; i++) {
+		temp[i] = this->Bag[i];
+	}
+	delete [] this->Bag;
+	this->Bag = temp;
+}
+
 SortedBag::SortedBag(Relation r, int bagSize) {
 	this->rel = r;
 	this->bagSize = bagSize;
