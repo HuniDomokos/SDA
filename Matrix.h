@@ -12,11 +12,18 @@ private:
 		TElem data;
 		Node* nextRow;
 		Node* nextCol;
+		Node(int r, int c, TElem d, Node* nR, Node* nC) {
+			row = r;
+			col = c;
+			data = d;
+			nextRow = nR;
+			nextCol = nC;
+		}
 	};
-	Node* rowHeads;
-	Node* colHeads;
+	Node* rowHead;
+	Node* colHead;
 
-	int numLines;
+	int numRows;
 	int numCols;
 public:
 	//constructor
