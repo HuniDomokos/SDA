@@ -115,7 +115,31 @@ TElem Matrix::modify(int i, int j, TElem e) {
 }
 
 Matrix::~Matrix() {
-	//TODO - Implementation
+	Node* currentRow = this->rowHead;
+
+	for (int i = 0; i < numRows; i++) {
+		Node* currentElement = currentRow->nextRow;
+		while (currentElement != currentRow) {
+			Node* nextToDelete = currentElement->nextRow;
+			delete currentElement;
+			currentElement = nextToDelete;
+		}
+		currentRow = currentRow->nextCol;
+	}
+
+	Node* rHead = this->rowHead;
+	for (int i = 0; i < numRows; i++) {
+		Node* nextR = rHead->nextCol;
+		delete rHead;
+		rHead = nextR;
+	}
+
+	Node* cHead = this->colHead;
+	for (int j = 0; j < numCols; j++) {
+		Node* nextC = cHead->nextRow;
+		delete cHead;
+		cHead = nextC;
+	}
 }
 
 
