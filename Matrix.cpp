@@ -29,17 +29,17 @@ Matrix::Matrix(int nrLines, int nrCols) {
 		else prevCol->nextRow = newCol;
 		prevCol = newCol;
 	}
-}
+} // O(n)  Best case: Theta(1) exception
 
 
 int Matrix::nrLines() const {
 	return this->numRows;
-}
+} // Theta(1)
 
 
 int Matrix::nrColumns() const {
 	return this->numCols;
-}
+} // Theta(1)
 
 
 TElem Matrix::element(int i, int j) const {
@@ -60,7 +60,7 @@ TElem Matrix::element(int i, int j) const {
 	}
 
 	return NULL_TELEM;
-}
+} // O(n)  Best case: Theta(1) exception
 
 TElem Matrix::modify(int i, int j, TElem e) {
 	if (i < 0 || i >= numRows || j < 0 || j >= numCols) {
@@ -112,7 +112,7 @@ TElem Matrix::modify(int i, int j, TElem e) {
 	}
 
 	return prevVal;
-}
+} // O(n)  Best case: Theta(1) exception
 
 Matrix::~Matrix() {
 	Node* currentRow = this->rowHead;
@@ -140,6 +140,6 @@ Matrix::~Matrix() {
 		delete cHead;
 		cHead = nextC;
 	}
-}
+} // Theta(n^2)
 
 
