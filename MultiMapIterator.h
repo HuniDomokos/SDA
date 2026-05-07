@@ -9,15 +9,14 @@ class MultiMapIterator
 
 private:
 	const MultiMap& col;
-	MultiMap::Node* current_key;
-	MultiMap::ValueNode* current_val;
+	int currentKeyIdx;
+	int currentValIdx;
 
 	MultiMapIterator(const MultiMap& c);
 
 public:
-	TElem getCurrent()const;
+	TElem getCurrent() const;
 	bool valid() const;
 	void next();
 	void first();
 };
-

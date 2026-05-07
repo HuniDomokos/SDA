@@ -20,27 +20,37 @@ class MultiMap
 private:
 	struct ValueNode {
 		TValue value;
-		ValueNode* prev;
-		ValueNode* next;
+		int next;
+		int prev;
 
-		ValueNode(int v, ValueNode* prev, ValueNode* next)
-			: value(v), prev(prev), next(next) {}
+		ValueNode() : value(NULL_TVALUE), next(-1), prev(-1) {}
 	};
 
 	struct Node {
 		TKey key;
-		ValueNode* valHead;
-		ValueNode* valTail;
-		Node* prev;
-		Node* next;
+		int valHead;
+		int valTail;
+		int next;
+		int prev;
 
-		Node(int k, Node* prev, Node* next)
-			: key(k), valHead(nullptr), valTail(nullptr), prev(prev), next(next) {}
+		Node() : key(-1), valHead(-1), valTail(-1), next(-1), prev(-1) {}
 	};
 
-	Node* head;
-	Node* tail;
+	Node* nodes;
+	int keyCapacity;
+	int keyHead;
+	int keyTail;
+	int firstEmptyKey;
+
+
+	ValueNode* valuePool;
+	int valCapacity;
+	int firstEmptyVal;
+
 	int map_size;
+
+	void resizeKeys();
+	void resizeValues();
 
 public:
 	//constructor

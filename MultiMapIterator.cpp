@@ -1,49 +1,44 @@
 #include "MultiMapIterator.h"
-
+#include "MultiMap.h"
 #include <stdexcept>
 
-#include "MultiMap.h"
-
-
-MultiMapIterator::MultiMapIterator(const MultiMap& c): col(c) {
-	this->current_key = col.head;
-	if(this->current_key) this->current_val = col.head->valHead;
-	else this->current_val = nullptr;
+MultiMapIterator::MultiMapIterator(const MultiMap& c) : col(c) {
+	this->first();
 }
 
-TElem MultiMapIterator::getCurrent() const{
-	if (this->valid()) {
-		return pair<int,int>(this->current_key->key,this->current_val->value);
+TElem MultiMapIterator::getCurrent() const {
+	if (!this->valid()) {
+		throw std::logic_error("getCurrent(): Iterator is invalid.");
 	}
-	else throw std::logic_error("getCurrent()");
-	return NULL_TELEM;
+	TKey k = col.nodes[currentKeyIdx].key;
+	TValue v = col.valuePool[currentValIdx].value;
+	return std::make_pair(k, v);
 }
 
 bool MultiMapIterator::valid() const {
-	if (this->current_key && this->current_val) {return true;}
-	return false;
+	return this->currentKeyIdx != -1 && this->currentValIdx != -1;
 }
 
 void MultiMapIterator::next() {
 	if (!this->valid()) {
-		throw std::logic_error("next()");
+		throw std::logic_error("next(): Iterator is invalid.");
 	}
-	if (this->current_val->next) {
-		this->current_val = this->current_val->next;
-	}
-	else if (this->current_key->next) {
-		this->current_key = this->current_key->next;
-		this->current_val = this->current_key->valHead;
-	}
-	else {
-		this->current_key = nullptr;
-		this->current_val = nullptr;
+
+	this->currentValIdx = col.valuePool[currentValIdx].next;
+
+	if (this->currentValIdx == -1) {
+		this->currentKeyIdx = col.nodes[currentKeyIdx].next;
+		if (this->currentKeyIdx != -1) {
+			this->currentValIdx = col.nodes[currentKeyIdx].valHead;
+		}
 	}
 }
 
 void MultiMapIterator::first() {
-	this->current_key = this->col.head;
-	if (this->current_key) this->current_val = this->col.head->valHead;
-	else this->current_val = nullptr;
+	this->currentKeyIdx = col.keyHead;
+	if (this->currentKeyIdx != -1) {
+		this->currentValIdx = col.nodes[currentKeyIdx].valHead;
+	} else {
+		this->currentValIdx = -1;
+	}
 }
-

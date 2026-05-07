@@ -1,133 +1,183 @@
 #include "MultiMap.h"
 #include "MultiMapIterator.h"
 #include <exception>
-#include <iostream>
-
-using namespace std;
-
+#include <vector>
 
 MultiMap::MultiMap() {
-	this->head = nullptr;
-	this->tail = nullptr;
-	this->map_size = 0;
+    this->keyCapacity = 10;
+    this->valCapacity = 10;
+    this->nodes = new Node[keyCapacity];
+    this->valuePool = new ValueNode[valCapacity];
+    this->keyHead = -1;
+    this->keyTail = -1;
+    this->firstEmptyKey = 0;
+    this->firstEmptyVal = 0;
+    this->map_size = 0;
+
+    for (int i = 0; i < keyCapacity - 1; i++) {
+        nodes[i].next = i + 1;
+    }
+    nodes[keyCapacity - 1].next = -1;
+
+    for (int i = 0; i < valCapacity - 1; i++) {
+        valuePool[i].next = i + 1;
+    }
+    valuePool[valCapacity - 1].next = -1;
 }
 
+void MultiMap::resizeKeys() {
+    int oldCap = keyCapacity;
+    keyCapacity *= 2;
+    Node* newNodes = new Node[keyCapacity];
+    for (int i = 0; i < oldCap; i++) {
+        newNodes[i] = nodes[i];
+    }
+    for (int i = oldCap; i < keyCapacity - 1; i++) {
+        newNodes[i].next = i + 1;
+    }
+    newNodes[keyCapacity - 1].next = -1;
+    delete[] nodes;
+    nodes = newNodes;
+    firstEmptyKey = oldCap;
+}
+
+void MultiMap::resizeValues() {
+    int oldCap = valCapacity;
+    valCapacity *= 2;
+    ValueNode* newVals = new ValueNode[valCapacity];
+    for (int i = 0; i < oldCap; i++) {
+        newVals[i] = valuePool[i];
+    }
+    for (int i = oldCap; i < valCapacity - 1; i++) {
+        newVals[i].next = i + 1;
+    }
+    newVals[valCapacity - 1].next = -1;
+    delete[] valuePool;
+    valuePool = newVals;
+    firstEmptyVal = oldCap;
+}
 
 void MultiMap::add(TKey c, TValue v) {
-	Node* current = this->head;
+    int currentKey = keyHead;
+    int targetKeyIdx = -1;
 
-	while (current != nullptr) {
-		if (current->key == c) {
-			ValueNode* newVal = new ValueNode(v, current->valTail, nullptr);
-			if (current->valTail) current->valTail->next = newVal;
-			else current->valHead = newVal;
-			current->valTail = newVal;
-			this->map_size++;
-			return;
-		}
-		current = current->next;
-	}
-	Node* newKey = new Node(c,this->tail,nullptr);
-	if (this->tail != nullptr) this->tail->next = newKey;
-	else this->head = newKey;
-	this->tail = newKey;
+    while (currentKey != -1) {
+        if (nodes[currentKey].key == c) {
+            targetKeyIdx = currentKey;
+            break;
+        }
+        currentKey = nodes[currentKey].next;
+    }
 
-	ValueNode* newVal = new ValueNode(v, nullptr, nullptr);
-	newKey->valHead = newVal;
-	newKey->valTail = newVal;
+    if (targetKeyIdx == -1) {
+        if (firstEmptyKey == -1) resizeKeys();
+        targetKeyIdx = firstEmptyKey;
+        firstEmptyKey = nodes[firstEmptyKey].next;
 
-	this->map_size++;
-} // Theta(n)
+        nodes[targetKeyIdx].key = c;
+        nodes[targetKeyIdx].valHead = -1;
+        nodes[targetKeyIdx].valTail = -1;
+        nodes[targetKeyIdx].prev = keyTail;
+        nodes[targetKeyIdx].next = -1;
 
+        if (keyHead == -1) keyHead = targetKeyIdx;
+        if (keyTail != -1) nodes[keyTail].next = targetKeyIdx;
+        keyTail = targetKeyIdx;
+    }
 
-bool MultiMap::remove(TKey c, TValue v) {
-	Node* current = this->head;
-	while (current != nullptr) {
-		if (current->key == c) {
-			ValueNode* curr_val = current->valHead;
-			while (curr_val != nullptr) {
-				if (curr_val->value == v) {
-					if (curr_val->prev != nullptr && curr_val->next != nullptr) {
-						curr_val->prev->next = curr_val->next;
-						curr_val->next->prev = curr_val->prev;
-						delete curr_val;
-					}
-					else if (curr_val->prev == nullptr) {
-						current->valHead = curr_val->next;
-						if (curr_val->next) curr_val->next->prev = nullptr;
-						delete curr_val;
-					}
-					else if (curr_val->next == nullptr) {
-						current->valTail = curr_val->prev;
-						if (curr_val->prev) curr_val->prev->next = nullptr;
-						delete curr_val;
-					}
+    if (firstEmptyVal == -1) resizeValues();
+    int newValIdx = firstEmptyVal;
+    firstEmptyVal = valuePool[firstEmptyVal].next;
 
-					if (current->valHead == nullptr) {
-						if (current->prev) current->prev->next = current->next;
-						else               this->head = current->next;
+    valuePool[newValIdx].value = v;
+    valuePool[newValIdx].prev = nodes[targetKeyIdx].valTail;
+    valuePool[newValIdx].next = -1;
 
-						if (current->next) current->next->prev = current->prev;
-						else               this->tail = current->prev;
-
-						delete current;
-					}
-					this->map_size--;
-					return true;
-				}
-				curr_val = curr_val->next;
-			}
-		}
-		current = current->next;
-	}
-	return false;
-} // O(n^2) Best case: is empty Theta(1)
-
-
-vector<TValue> MultiMap::search(TKey c) const {
-	Node* current = this->head;
-	while (current != nullptr) {
-		if (current->key == c) {
-			vector<TValue> v;
-			ValueNode* curr_val = current->valHead;
-			while (curr_val != nullptr) {
-				v.push_back(curr_val->value);
-				curr_val = curr_val->next;
-			}
-			return v;
-		}
-		current = current->next;
-	}
-	return vector<TValue>();
-} // O(n^2) Best case : is Empty Theta(1)
-
-
-int MultiMap::size() const {
-	return this->map_size;
-} // Theta(1)
-
-
-bool MultiMap::isEmpty() const {
-	return this->head == nullptr;
-} // Theta(1)
-
-MultiMapIterator MultiMap::iterator() const {
-	return MultiMapIterator(*this);
+    if (nodes[targetKeyIdx].valHead == -1) {
+        nodes[targetKeyIdx].valHead = newValIdx;
+    } else {
+        valuePool[nodes[targetKeyIdx].valTail].next = newValIdx;
+    }
+    nodes[targetKeyIdx].valTail = newValIdx;
+    map_size++;
 }
 
+bool MultiMap::remove(TKey c, TValue v) {
+    int currentKey = keyHead;
+    while (currentKey != -1) {
+        if (nodes[currentKey].key == c) {
+            int currentVal = nodes[currentKey].valHead;
+            while (currentVal != -1) {
+                if (valuePool[currentVal].value == v) {
+                    if (valuePool[currentVal].prev != -1)
+                        valuePool[valuePool[currentVal].prev].next = valuePool[currentVal].next;
+                    else
+                        nodes[currentKey].valHead = valuePool[currentVal].next;
+
+                    if (valuePool[currentVal].next != -1)
+                        valuePool[valuePool[currentVal].next].prev = valuePool[currentVal].prev;
+                    else
+                        nodes[currentKey].valTail = valuePool[currentVal].prev;
+
+                    valuePool[currentVal].next = firstEmptyVal;
+                    firstEmptyVal = currentVal;
+                    map_size--;
+
+                    if (nodes[currentKey].valHead == -1) {
+                        if (nodes[currentKey].prev != -1)
+                            nodes[nodes[currentKey].prev].next = nodes[currentKey].next;
+                        else
+                            keyHead = nodes[currentKey].next;
+
+                        if (nodes[currentKey].next != -1)
+                            nodes[nodes[currentKey].next].prev = nodes[currentKey].prev;
+                        else
+                            keyTail = nodes[currentKey].prev;
+
+                        nodes[currentKey].next = firstEmptyKey;
+                        firstEmptyKey = currentKey;
+                    }
+                    return true;
+                }
+                currentVal = valuePool[currentVal].next;
+            }
+            return false;
+        }
+        currentKey = nodes[currentKey].next;
+    }
+    return false;
+}
+
+vector<TValue> MultiMap::search(TKey c) const {
+    vector<TValue> result;
+    int currentKey = keyHead;
+    while (currentKey != -1) {
+        if (nodes[currentKey].key == c) {
+            int currentVal = nodes[currentKey].valHead;
+            while (currentVal != -1) {
+                result.push_back(valuePool[currentVal].value);
+                currentVal = valuePool[currentVal].next;
+            }
+            return result;
+        }
+        currentKey = nodes[currentKey].next;
+    }
+    return result;
+}
+
+int MultiMap::size() const {
+    return map_size;
+}
+
+bool MultiMap::isEmpty() const {
+    return map_size == 0;
+}
+
+MultiMapIterator MultiMap::iterator() const {
+    return MultiMapIterator(*this);
+}
 
 MultiMap::~MultiMap() {
-	Node* current = this->head;
-	while (current != nullptr) {
-		ValueNode* curr_val = current->valHead;
-		while (curr_val != nullptr) {
-			ValueNode* next_val = curr_val->next;
-			delete curr_val;
-			curr_val = next_val;
-		}
-		Node* next_node = current->next;
-		delete current;
-		current = next_node;
-	}
-} // Theta (n^2)
-
+    delete[] nodes;
+    delete[] valuePool;
+}
