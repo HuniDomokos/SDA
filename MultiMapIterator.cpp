@@ -1,40 +1,51 @@
 #include "MultiMapIterator.h"
-#include <exception>
+#include "MultiMap.h"
+#include <stdexcept>
 
 MultiMapIterator::MultiMapIterator(const MultiMap& c) : col(c) {
-	first();
+	this->first();
 }
-// Best/Worst: Theta(1)
 
 void MultiMapIterator::first() {
-	currentKey = col.headKey;
-	if (currentKey != -1) currentValue = col.keys[currentKey].headValue;
-	else currentValue = -1;
+	this->currentKey = col.headKey;
+	if (this->currentKey != -1) {
+		this->currentValue = col.keys[currentKey].valHead;
+	} else {
+		this->currentValue = -1;
+	}
 }
-// Best/Worst: Theta(1)
-
-bool MultiMapIterator::valid() const {
-	return currentKey != -1 && currentValue != -1;
-}
-// Best/Worst: Theta(1)
-
-TElem MultiMapIterator::getCurrent() const {
-	if (!valid()) throw std::exception();
-	return { col.keys[currentKey].key, col.values[currentValue].value };
-}
-// Best/Worst: Theta(1)
 
 void MultiMapIterator::next() {
-	if (!valid()) throw std::exception();
+	if (!this->valid()) {
+		throw std::logic_error("next(): Invalid iterator state.");
+	}
 
-	currentValue = col.values[currentValue].next;
+	// Move to next value in the current key's private DLLA
+	this->currentValue = col.keys[currentKey].valNext[currentValue];
 
-	if (currentValue == -1) {
-		currentKey = col.keys[currentKey].next;
-		if (currentKey != -1) {
-			currentValue = col.keys[currentKey].headValue;
+	// If reached end of values for current key, find next key that has values
+	if (this->currentValue == -1) {
+		this->currentKey = col.keys[currentKey].next;
+		while (this->currentKey != -1 && col.keys[currentKey].valHead == -1) {
+			this->currentKey = col.keys[currentKey].next;
+		}
+
+		if (this->currentKey != -1) {
+			this->currentValue = col.keys[currentKey].valHead;
 		}
 	}
 }
-// Best Case: Theta(1)
-//Worst Case: Theta(1)
+
+bool MultiMapIterator::valid() const {
+	return this->currentKey != -1 && this->currentValue != -1;
+}
+
+TElem MultiMapIterator::getCurrent() const {
+	if (!this->valid()) {
+		throw std::logic_error("getCurrent(): Invalid iterator state.");
+	}
+
+	TKey k = col.keys[currentKey].key;
+	TValue v = col.keys[currentKey].values[currentValue];
+	return std::make_pair(k, v);
+}

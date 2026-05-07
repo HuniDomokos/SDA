@@ -1,8 +1,12 @@
 #pragma once
 #include "MultiMap.h"
 
-class MultiMapIterator {
+class MultiMap;
+
+class MultiMapIterator
+{
 	friend class MultiMap;
+
 private:
 	const MultiMap& col;
 	int currentKey;

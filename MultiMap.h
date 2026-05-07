@@ -1,16 +1,15 @@
 #pragma once
-#include<vector>
-#include<utility>
-//DO NOT INCLUDE MultiMapIterator
+#include <vector>
+#include <utility>
 
 using namespace std;
 
-//DO NOT CHANGE THIS PART
 typedef int TKey;
 typedef int TValue;
 typedef std::pair<TKey, TValue> TElem;
 #define NULL_TVALUE -111111
 #define NULL_TELEM pair<int,int>(-111111, -111111)
+
 class MultiMapIterator;
 
 class MultiMap
@@ -18,64 +17,54 @@ class MultiMap
 	friend class MultiMapIterator;
 
 private:
-	struct ValueNode {
-		TValue value;
-		int next;
-		int prev;
-	};
-
 	struct KeyNode {
 		TKey key;
-		int headValue;
-		int tailValue;
+
+		TValue* values;
+		int* valNext;
+		int* valPrev;
+
+		int valHead;
+		int valTail;
+		int firstEmptyVal;
+		int valCapacity;
+		int valCount;
+
 		int next;
 		int prev;
+
+		KeyNode() : key(-1), values(nullptr), valNext(nullptr), valPrev(nullptr),
+					valHead(-1), valTail(-1), firstEmptyVal(-1), valCapacity(0),
+					valCount(0), next(-1), prev(-1) {}
 	};
 
 
 	KeyNode* keys;
-	ValueNode* values;
-
-	int capKeys, capValues;
-	int headKey, tailKey;
+	int capKeys;
+	int headKey;
+	int tailKey;
 	int firstEmptyKey;
-	int firstEmptyValue;
-
 	int count;
 
-
+	// Helper functions
 	void resizeKeys();
-	void resizeValues();
-	int allocateKey();
-	void freeKey(int index);
-	int allocateValue();
-	void freeValue(int index);
+	void resizeValues(int keyIdx);
+	int findKeyIndex(TKey c) const;
 
 public:
-	//constructor
 	MultiMap();
 
-	//adds a key value pair to the multimap
 	void add(TKey c, TValue v);
 
-	//removes a key value pair from the multimap
-	//returns true if the pair was removed (if it was in the multimap) and false otherwise
 	bool remove(TKey c, TValue v);
 
-	//returns the vector of values associated to a key. If the key is not in the MultiMap, the vector is empty
 	vector<TValue> search(TKey c) const;
 
-	//returns the number of pairs from the multimap
 	int size() const;
 
-	//checks whether the multimap is empty
 	bool isEmpty() const;
 
-	//returns an iterator for the multimap
 	MultiMapIterator iterator() const;
 
-	//descturctor
 	~MultiMap();
-
-
 };
