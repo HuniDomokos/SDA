@@ -17,13 +17,11 @@ void MultiMapIterator::first() {
 
 void MultiMapIterator::next() {
 	if (!this->valid()) {
-		throw std::logic_error("next(): Invalid iterator state.");
+		throw std::logic_error("next(): Invalid position");
 	}
 
-	// Move to next value in the current key's private DLLA
 	this->currentValue = col.keys[currentKey].valNext[currentValue];
 
-	// If reached end of values for current key, find next key that has values
 	if (this->currentValue == -1) {
 		this->currentKey = col.keys[currentKey].next;
 		while (this->currentKey != -1 && col.keys[currentKey].valHead == -1) {
@@ -42,7 +40,7 @@ bool MultiMapIterator::valid() const {
 
 TElem MultiMapIterator::getCurrent() const {
 	if (!this->valid()) {
-		throw std::logic_error("getCurrent(): Invalid iterator state.");
+		throw std::logic_error("getCurrent(): Invalid position");
 	}
 
 	TKey k = col.keys[currentKey].key;
