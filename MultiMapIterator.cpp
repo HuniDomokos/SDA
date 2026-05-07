@@ -1,44 +1,40 @@
 #include "MultiMapIterator.h"
-#include "MultiMap.h"
-#include <stdexcept>
+#include <exception>
 
 MultiMapIterator::MultiMapIterator(const MultiMap& c) : col(c) {
-	this->first();
+	first();
 }
+// Best/Worst: Theta(1)
 
-TElem MultiMapIterator::getCurrent() const {
-	if (!this->valid()) {
-		throw std::logic_error("getCurrent(): Iterator is invalid.");
-	}
-	TKey k = col.nodes[currentKeyIdx].key;
-	TValue v = col.valuePool[currentValIdx].value;
-	return std::make_pair(k, v);
+void MultiMapIterator::first() {
+	currentKey = col.headKey;
+	if (currentKey != -1) currentValue = col.keys[currentKey].headValue;
+	else currentValue = -1;
 }
+// Best/Worst: Theta(1)
 
 bool MultiMapIterator::valid() const {
-	return this->currentKeyIdx != -1 && this->currentValIdx != -1;
+	return currentKey != -1 && currentValue != -1;
 }
+// Best/Worst: Theta(1)
+
+TElem MultiMapIterator::getCurrent() const {
+	if (!valid()) throw std::exception();
+	return { col.keys[currentKey].key, col.values[currentValue].value };
+}
+// Best/Worst: Theta(1)
 
 void MultiMapIterator::next() {
-	if (!this->valid()) {
-		throw std::logic_error("next(): Iterator is invalid.");
-	}
+	if (!valid()) throw std::exception();
 
-	this->currentValIdx = col.valuePool[currentValIdx].next;
+	currentValue = col.values[currentValue].next;
 
-	if (this->currentValIdx == -1) {
-		this->currentKeyIdx = col.nodes[currentKeyIdx].next;
-		if (this->currentKeyIdx != -1) {
-			this->currentValIdx = col.nodes[currentKeyIdx].valHead;
+	if (currentValue == -1) {
+		currentKey = col.keys[currentKey].next;
+		if (currentKey != -1) {
+			currentValue = col.keys[currentKey].headValue;
 		}
 	}
 }
-
-void MultiMapIterator::first() {
-	this->currentKeyIdx = col.keyHead;
-	if (this->currentKeyIdx != -1) {
-		this->currentValIdx = col.nodes[currentKeyIdx].valHead;
-	} else {
-		this->currentValIdx = -1;
-	}
-}
+// Best Case: Theta(1)
+//Worst Case: Theta(1)

@@ -22,35 +22,34 @@ private:
 		TValue value;
 		int next;
 		int prev;
-
-		ValueNode() : value(NULL_TVALUE), next(-1), prev(-1) {}
 	};
 
-	struct Node {
+	struct KeyNode {
 		TKey key;
-		int valHead;
-		int valTail;
+		int headValue;
+		int tailValue;
 		int next;
 		int prev;
-
-		Node() : key(-1), valHead(-1), valTail(-1), next(-1), prev(-1) {}
 	};
 
-	Node* nodes;
-	int keyCapacity;
-	int keyHead;
-	int keyTail;
+
+	KeyNode* keys;
+	ValueNode* values;
+
+	int capKeys, capValues;
+	int headKey, tailKey;
 	int firstEmptyKey;
+	int firstEmptyValue;
 
+	int count;
 
-	ValueNode* valuePool;
-	int valCapacity;
-	int firstEmptyVal;
-
-	int map_size;
 
 	void resizeKeys();
 	void resizeValues();
+	int allocateKey();
+	void freeKey(int index);
+	int allocateValue();
+	void freeValue(int index);
 
 public:
 	//constructor
@@ -80,4 +79,3 @@ public:
 
 
 };
-
