@@ -13,7 +13,7 @@ void MultiMapIterator::first() {
 	} else {
 		this->currentValue = -1;
 	}
-}
+} // 0(1)
 
 void MultiMapIterator::next() {
 	if (!this->valid()) {
@@ -32,11 +32,11 @@ void MultiMapIterator::next() {
 			this->currentValue = col.keys[currentKey].valHead;
 		}
 	}
-}
+} // Best case: 0(1) Worst Case: 0(n)
 
 bool MultiMapIterator::valid() const {
 	return this->currentKey != -1 && this->currentValue != -1;
-}
+} // 0(1)
 
 TElem MultiMapIterator::getCurrent() const {
 	if (!this->valid()) {
@@ -46,4 +46,4 @@ TElem MultiMapIterator::getCurrent() const {
 	TKey k = col.keys[currentKey].key;
 	TValue v = col.keys[currentKey].values[currentValue];
 	return std::make_pair(k, v);
-}
+} // 0(1)

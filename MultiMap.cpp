@@ -119,7 +119,7 @@ void MultiMap::add(TKey c, TValue v) {
     keys[keyIdx].valTail = valIdx;
     keys[keyIdx].valCount++;
     count++;
-}  //Best case: 0(1)    Worst case: 0(N)
+}  //Best case/Worst case: 0(N)
 
 bool MultiMap::remove(TKey c, TValue v) {
     int keyIdx = findKeyIndex(c);
@@ -169,7 +169,7 @@ bool MultiMap::remove(TKey c, TValue v) {
         valIdx = keys[keyIdx].valNext[valIdx];
     }
     return false;
-}  //best case: 0(1)     Worst case: 0(N+M)
+}  //best case/Worst case: 0(N+M)
 
 vector<TValue> MultiMap::search(TKey c) const {
     vector<TValue> res;
@@ -182,7 +182,7 @@ vector<TValue> MultiMap::search(TKey c) const {
         }
     }
     return res;
-}  //best case: 0(1)   worst case: 0(N+M)
+}  //best case/worst case: 0(N+M)
 
 int MultiMap::size() const {
     return count;
