@@ -41,7 +41,7 @@ bool MultiMapIterator::valid() const {
 TElem MultiMapIterator::getCurrent() const {
 	if (!this->valid()) {
 		throw std::logic_error("getCurrent(): Invalid position");
-	}
+	} // 0(1)
 
 	TKey k = col.keys[currentKey].key;
 	TValue v = col.keys[currentKey].values[currentValue];
