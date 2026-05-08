@@ -3,6 +3,8 @@
 #include <exception>
 #include <vector>
 
+// N = numarul de chei unice     M = numarul de valori asociate unei chei      CK= capacitatea totala a vectorului de chei      CV = capacitatea curenta a vectorului de valori al unei chei
+
 MultiMap::MultiMap() {
     capKeys = 10;
     keys = new KeyNode[capKeys];
@@ -15,7 +17,7 @@ MultiMap::MultiMap() {
         keys[i].next = i + 1;
     }
     keys[capKeys - 1].next = -1;
-}
+}     //Best/Worst case: 0(CK)
 
 void MultiMap::resizeKeys() {
     int oldCap = capKeys;
@@ -31,7 +33,7 @@ void MultiMap::resizeKeys() {
     delete[] keys;
     keys = newKeys;
     firstEmptyKey = oldCap;
-}
+} //Best/Worst case: 0(CK)
 
 void MultiMap::resizeValues(int keyIdx) {
     int oldCap = keys[keyIdx].valCapacity;
@@ -61,7 +63,7 @@ void MultiMap::resizeValues(int keyIdx) {
     keys[keyIdx].valPrev = newPrev;
     keys[keyIdx].valCapacity = newCap;
     keys[keyIdx].firstEmptyVal = oldCap;
-}
+}  //Best/Worst case: 0(CV)
 
 int MultiMap::findKeyIndex(TKey c) const {
     int current = headKey;
@@ -70,7 +72,7 @@ int MultiMap::findKeyIndex(TKey c) const {
         current = keys[current].next;
     }
     return -1;
-}
+}  //Best case: 0(1)   Worst case: 0(n)
 
 void MultiMap::add(TKey c, TValue v) {
     int keyIdx = findKeyIndex(c);
@@ -117,7 +119,7 @@ void MultiMap::add(TKey c, TValue v) {
     keys[keyIdx].valTail = valIdx;
     keys[keyIdx].valCount++;
     count++;
-}
+}  //Best case: 0(1)    Worst case: 0(N)
 
 bool MultiMap::remove(TKey c, TValue v) {
     int keyIdx = findKeyIndex(c);
@@ -167,7 +169,7 @@ bool MultiMap::remove(TKey c, TValue v) {
         valIdx = keys[keyIdx].valNext[valIdx];
     }
     return false;
-}
+}  //best case: 0(1)     Worst case: 0(N+M)
 
 vector<TValue> MultiMap::search(TKey c) const {
     vector<TValue> res;
@@ -180,7 +182,7 @@ vector<TValue> MultiMap::search(TKey c) const {
         }
     }
     return res;
-}
+}  //best case: 0(1)   worst case: 0(N+M)
 
 int MultiMap::size() const {
     return count;
@@ -204,4 +206,4 @@ MultiMap::~MultiMap() {
         current = next;
     }
     delete[] keys;
-}
+}   //Best/Worst case: 0(N)
