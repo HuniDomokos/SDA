@@ -1,0 +1,10 @@
+^C:\USERS\HUNIH\CLIONPROJECTS\SDA\LAB5\BUILD\CMAKEFILES\0C6ED81E23A074969326F600D5E7C72E\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/hunih/CLionProjects/SDA/lab5 -BC:/Users/hunih/CLionProjects/SDA/lab5/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/hunih/CLionProjects/SDA/lab5/build/SortedIndexedList.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

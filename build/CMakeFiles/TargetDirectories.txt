@@ -1,0 +1,3 @@
+C:/Users/hunih/CLionProjects/SDA/lab5/build/CMakeFiles/SortedIndexedList.dir
+C:/Users/hunih/CLionProjects/SDA/lab5/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/hunih/CLionProjects/SDA/lab5/build/CMakeFiles/ZERO_CHECK.dir
