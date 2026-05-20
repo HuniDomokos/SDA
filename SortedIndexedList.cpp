@@ -97,7 +97,7 @@ TComp SortedIndexedList::remove(int i) {
 
     nr_elems--;
     return removed;
-}
+} // Average: O(log n) Worst case: O(n)
 
 int SortedIndexedList::search(TComp e) const {
     Node* current = root;
@@ -118,7 +118,7 @@ int SortedIndexedList::search(TComp e) const {
         }
     }
     return found;
-}
+} // Average: O(log n) Worst case: O(n)
 
 void SortedIndexedList::add(TComp e) {
     Node* newNode = new Node(e);
@@ -138,7 +138,7 @@ void SortedIndexedList::add(TComp e) {
             current = current->right;
         }
     }
-}
+}   // Average: O(log n) Worst case: O(n)
 
 ListIterator SortedIndexedList::iterator(){
 	return ListIterator(*this);
@@ -150,7 +150,7 @@ void SortedIndexedList::deleteTree(SortedIndexedList::Node* node) {
     deleteTree(node->left);
     deleteTree(node->right);
     delete node;
-}
+} // Theta n
 
 SortedIndexedList::~SortedIndexedList() {
     deleteTree(root);
