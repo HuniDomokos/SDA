@@ -13,19 +13,19 @@ SortedMap::SortedMap(Relation r) {
     table = new TElem[capacity];
     for (int i = 0; i < capacity; i++)
         table[i] = NULL_TPAIR
-}
+} // Theta(capacity)
 
 int SortedMap::hash1(TKey k) const {
     return abs(k) % capacity;
-}
+} // Theta(1)
 
 int SortedMap::hash2(TKey k) const {
     return 1 + (abs(k) % (capacity - 1));
-}
+} // Theta(1)
 
 int SortedMap::probe(TKey k, int i) const {
     return (hash1(k) + i * hash2(k)) % capacity;
-}
+} // Theta(1)
 
 void SortedMap::resize() {
     int old_capacity = capacity;
@@ -43,7 +43,7 @@ void SortedMap::resize() {
             add(old_table[i].first, old_table[i].second);
     }
     delete[] old_table;
-}
+} // Theta(capacity)
 
 TValue SortedMap::add(TKey k, TValue v) {
     if (nr_elements >= capacity / 2)
@@ -69,7 +69,7 @@ TValue SortedMap::add(TKey k, TValue v) {
     }
 
     return NULL_TVALUE;
-} // Average O(1) , Worst case O(n)
+} // Average O(1), Worst case O(n)
 
 TValue SortedMap::search(TKey k) const {
     int i = 0;
@@ -84,7 +84,7 @@ TValue SortedMap::search(TKey k) const {
         i++;
     }
     return NULL_TVALUE;
-} // Average O(1) , Worst case O(n)
+} // Average O(1), Worst case O(n)
 
 TValue SortedMap::remove(TKey k) {
     int i = 0;
@@ -103,20 +103,20 @@ TValue SortedMap::remove(TKey k) {
         i++;
     }
     return NULL_TVALUE;
-} // Average O(1) , Worst case O(n)
+} // Average O(1), Worst case O(n)
 
 int SortedMap::size() const {
     return nr_elements;
-} // Theta 1
+} // Theta(1)
 
 bool SortedMap::isEmpty() const {
     return nr_elements == 0;
-} // Theta 1
+} // Theta(1)
 
 SMIterator SortedMap::iterator() const {
     return SMIterator(*this);
-} // Theta 1
+} // O(n log n) - sorts all elements during iterator construction
 
 SortedMap::~SortedMap() {
     delete[] table;
-} // Theta 1
+} // Theta(1)

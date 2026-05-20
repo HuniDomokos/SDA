@@ -26,27 +26,25 @@ SMIterator::SMIterator(const SortedMap& m) : map(m) {
 
 	sortedElems[count] = NULL_TPAIR
 	current = 0;
-}
+} // O(capacity + n^2) - O(capacity) to collect, O(n^2) insertion sort
 
 void SMIterator::first(){
 	current = 0;
-}
+} // Theta(1)
 
 void SMIterator::next(){
 	if (!valid())
 		throw exception();
 	current++;
-}
+} // Theta(1)
 
 bool SMIterator::valid() const {
 	TElem null_pair = NULL_TPAIR
 	return sortedElems[current] != null_pair;
-}
+} // Theta(1)
 
 TElem SMIterator::getCurrent() const {
 	if (!valid())
 		throw exception();
 	return sortedElems[current];
-}
-
-
+} // Theta(1)
